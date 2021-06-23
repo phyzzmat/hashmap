@@ -250,14 +250,14 @@ public:
         return copy_iter;
     }
 
-private:
+  private:
     std::pair<const KeyType, ValueType> *iter;
 };
 
 // Constant iterator for HashMap
 template<class KeyType, class ValueType>
 class ConstIter {
-public:
+  public:
     ConstIter() = default;
 
     ConstIter(const std::pair<KeyType, ValueType> *ptr) {
@@ -291,6 +291,6 @@ public:
         return copy_const_iter;
     }
 
-private:
+  private:
     const std::pair<const KeyType, ValueType> *const_iter;
 };
