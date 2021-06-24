@@ -35,30 +35,40 @@ class HashMap {
     // Constructor from initializer list
     HashMap(std::initializer_list<std::pair<KeyType, ValueType>> init_list, const Hash &h = Hash()) {
         hasher_ = h;
-        for (auto element : init_list) insert(element);
+        for (auto element : init_list) {
+            insert(element);
+        }
     };
 
     // O(1)
     iterator begin() {
-        if (hashmap_.empty()) return iterator(nullptr);
+        if (hashmap_.empty()) {
+            return iterator(nullptr);
+        }
         return iterator(&hashmap_[0]);
     }
 
     // O(1)
     iterator end() {
-        if (hashmap_.empty()) return iterator(nullptr);
+        if (hashmap_.empty()) {
+            return iterator(nullptr);
+        }
         return iterator(&hashmap_[0] + stored_elements);
     }
 
     // O(1)
     const_iterator begin() const {
-        if (hashmap_.empty()) return const_iterator(nullptr);
+        if (hashmap_.empty()) {
+            return const_iterator(nullptr);
+        }
         return const_iterator(&hashmap_[0]);
     }
 
     // O(1)
     const_iterator end() const {
-        if (hashmap_.empty()) return const_iterator(nullptr);
+        if (hashmap_.empty()) {
+            return const_iterator(nullptr);
+        }
         return const_iterator(&hashmap_[0] + stored_elements);
     }
 
