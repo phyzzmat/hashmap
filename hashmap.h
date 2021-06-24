@@ -53,7 +53,7 @@ class HashMap {
         if (hashmap_.empty()) {
             return iterator(nullptr);
         }
-        return iterator(&hashmap_[0] + stored_elements);
+        return iterator(&hashmap_[0] + stored_elements_);
     }
 
     // O(1)
@@ -69,14 +69,14 @@ class HashMap {
         if (hashmap_.empty()) {
             return const_iterator(nullptr);
         }
-        return const_iterator(&hashmap_[0] + stored_elements);
+        return const_iterator(&hashmap_[0] + stored_elements_);
     }
 
     // Returns non-const iterator to key if it exists, end() otherwise.
     // Time complexity: amortized O(1).
     iterator find(KeyType key) {
-        if (capacity == 0) return end();
-        int candidate_position = hasher_(key) % capacity;
+        if (capacity_ == 0) return end();
+        int candidate_position = hasher_(key) % capacity_;
         for (auto element : indices_[candidate_position]) {
             if (hashmap_[element].first == key) {
                 return iterator(&hashmap_[0] + element);
@@ -88,8 +88,8 @@ class HashMap {
     // Returns const iterator to key if it exists, end() otherwise.
     // Time complexity: amortized O(1), individual query expected O(1), provided the hash function is good enough.
     const_iterator find(KeyType key) const {
-        if (capacity == 0) return end();
-        int candidate_position = hasher_(key) % capacity;
+        if (capacity_ == 0) return end();
+        int candidate_position = hasher_(key) % capacity_;
         for (auto element : indices_[candidate_position]) {
             if (hashmap_[element].first == key) {
                 return const_iterator(&hashmap_[0] + element);
@@ -101,8 +101,8 @@ class HashMap {
     // Empties the hashmap.
     // Time complexity: O(n), where n is the number of elements contained inside the hashmap.
     void clear() {
-        capacity = 0;
-        stored_elements = 0;
+        capacity_ = 0;
+        stored_elements_ = 0;
         hashmap_.clear();
         indices_.clear();
         indices_.resize(1);
@@ -114,13 +114,13 @@ class HashMap {
         if (find(x.first) != end()) {
             return;
         }
-        if (stored_elements >= capacity) {
-            capacity = capacity * kScalingFactor + 1;
+        if (stored_elements_ >= capacity_) {
+            capacity_ = capacity_ * kScalingFactor + 1;
             rebuild();
         }
-        ++stored_elements;
-        int pos = hasher_(x.first) % capacity;
-        indices_[pos].push_back(stored_elements - 1);
+        ++stored_elements_;
+        int pos = hasher_(x.first) % capacity_;
+        indices_[pos].push_back(stored_elements_ - 1);
         hashmap_.push_back(x);
     }
 
@@ -136,15 +136,15 @@ class HashMap {
         } else {
             erase_non_last_element(key, last_element);
         }
-        if (stored_elements * kMinLoadFactor <= capacity) {
-            capacity /= kScalingFactor;
+        if (stored_elements_ * kMinLoadFactor <= capacity_) {
+            capacity_ /= kScalingFactor;
             rebuild();
         }
     }
 
     // Returns number of elements contained inside the hashmap. O(1)
     size_t size() const {
-        return stored_elements;
+        return stored_elements_;
     }
 
     // Checks if the hashmap contains no elements. O(1)
@@ -173,11 +173,11 @@ class HashMap {
         return hasher_;
     }
 
-private:
+  private:
 
-    size_t capacity = 0, stored_elements = 0;
+    size_t capacity_ = 0, stored_elements_ = 0;
     // How many times the capacity of the map changes after rebuilding
-    static constexpr size_t kScalingFactor = 2;  
+    static constexpr size_t kScalingFactor = 2;
     // The minimum discrepancy between hashmap capacity and number of stored elements for it to be rebuilt
     static constexpr size_t kMinLoadFactor = 4;
 
@@ -189,38 +189,38 @@ private:
     void rebuild() {
         std::vector<std::pair<KeyType, ValueType>> old_hashmap;
         old_hashmap = hashmap_;
-        stored_elements = 0;
+        stored_elements_ = 0;
         hashmap_.clear();
         indices_.clear();
-        indices_.resize(capacity);
+        indices_.resize(capacity_);
         for (auto element : old_hashmap) {
             insert(element);
         }
     }
-    
+
     // Helper function. Erases an element if it is last in data storage.
     void erase_last_element() {
-        size_t chain_storage_location = hasher_(hashmap_.back().first) % capacity;
+        size_t chain_storage_location = hasher_(hashmap_.back().first) % capacity_;
         hashmap_.pop_back();
-        --stored_elements;
+        --stored_elements_;
         auto it = indices_[chain_storage_location].begin();
-        while (*it != stored_elements) {
+        while (*it != stored_elements_) {
             ++it;
         }
         indices_[chain_storage_location].erase(it);
     }
-    
+
     // Helper function. Erases an element if it is not last in data storage.
     void erase_non_last_element(const KeyType& key, const std::pair<KeyType, ValueType>& last_element) {
-    	int last_element_chain_storage_location = hasher_(last_element.first) % capacity;
-        int chain_storage_location = hasher_(key) % capacity;
+        int last_element_chain_storage_location = hasher_(last_element.first) % capacity_;
+        int chain_storage_location = hasher_(key) % capacity_;
         size_t data_storage_location = 0;
         for (auto i : indices_[chain_storage_location]) {
             if (hashmap_[i].first == key) data_storage_location = i;
         }
-        --stored_elements;
+        --stored_elements_;
         auto it = indices_[last_element_chain_storage_location].begin();
-        while (*it != stored_elements) {
+        while (*it != stored_elements_) {
             ++it;
         }
         *it = data_storage_location;
