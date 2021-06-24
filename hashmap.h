@@ -12,7 +12,7 @@ template<class KeyType, class ValueType> class ConstIter;
 // - the main data storage, implemented with std::vector<std::pair<>>.
 // Resize policy:
 // - if the number of elements exceeds current capacity, capacity is increased to double the original plus one;
-// - if the capacity exceeds double the number of elements multiplied by some constant, the size is reduced by half.
+// - if the capacity exceeds double the number of elements, the size is reduced by half.
 
 template<class KeyType, class ValueType, class Hash = std::hash<KeyType> >
 class HashMap {
@@ -188,7 +188,7 @@ class HashMap {
         return hasher_;
     }
 
-  private:
+private:
 
     size_t capacity = 0, stored_elements = 0;
     // The minimum discrepancy between hashmap capacity and number of stored elements for it to be rebuilt
@@ -216,7 +216,7 @@ class HashMap {
 // Iterator for HashMap
 template<class KeyType, class ValueType>
 class Iter {
-public:
+  public:
     Iter() = default;
 
     Iter(std::pair<KeyType, ValueType> *ptr) {
