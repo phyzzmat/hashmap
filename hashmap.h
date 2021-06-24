@@ -204,7 +204,7 @@ private:
     // How many times the capacity of the map changes after rebuilding
     static constexpr size_t kScalingFactor = 2;  
     // The minimum discrepancy between hashmap capacity and number of stored elements for it to be rebuilt
-    static constexpr size_t kMinLoadFactor = 2;
+    static constexpr size_t kMinLoadFactor = 4;
 
     std::vector<std::list<size_t>> indices_;
     std::vector<std::pair<KeyType, ValueType>> hashmap_;
