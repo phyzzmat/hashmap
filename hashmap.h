@@ -6,7 +6,7 @@
 template<class KeyType, class ValueType> class Iter;
 template<class KeyType, class ValueType> class ConstIter;
 
-// HashMap with separate chaining.
+// HashMap with separate chaining. https://en.wikipedia.org/wiki/Hash_table#Separate_chaining
 // Operates using two containers:
 // - the chain list, where chains are implemented with std::list<> and contain indices of data entries in main storage;
 // - the main data storage, implemented with std::vector<std::pair<>>.
