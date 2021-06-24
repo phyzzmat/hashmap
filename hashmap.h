@@ -77,7 +77,7 @@ class HashMap {
     iterator find(KeyType key) {
         if (capacity_ == 0) return end();
         int candidate_position = hasher_(key) % capacity_;
-        for (auto element : indices_[candidate_position]) {
+        for (const auto& element : indices_[candidate_position]) {
             if (hashmap_[element].first == key) {
                 return iterator(&hashmap_[0] + element);
             }
@@ -90,7 +90,7 @@ class HashMap {
     const_iterator find(KeyType key) const {
         if (capacity_ == 0) return end();
         int candidate_position = hasher_(key) % capacity_;
-        for (auto element : indices_[candidate_position]) {
+        for (const auto& element : indices_[candidate_position]) {
             if (hashmap_[element].first == key) {
                 return const_iterator(&hashmap_[0] + element);
             }
