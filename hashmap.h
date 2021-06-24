@@ -132,34 +132,9 @@ class HashMap {
         }
         std::pair<KeyType, ValueType> last_element = hashmap_.back();
         if (last_element.first == key) {
-            hashmap_.pop_back();
-            size_t chain_storage_location = hasher_(last_element.first) % capacity;
-            --stored_elements;
-            auto it = indices_[chain_storage_location].begin();
-            while (*it != stored_elements) {
-                ++it;
-            }
-            indices_[chain_storage_location].erase(it);
+            erase_last_element();
         } else {
-            int last_element_chain_storage_location = hasher_(last_element.first) % capacity;
-            int chain_storage_location = hasher_(key) % capacity;
-            size_t data_storage_location = 0;
-            for (auto i : indices_[chain_storage_location]) {
-                if (hashmap_[i].first == key) data_storage_location = i;
-            }
-            --stored_elements;
-            auto it = indices_[last_element_chain_storage_location].begin();
-            while (*it != stored_elements) {
-                ++it;
-            }
-            *it = data_storage_location;
-            it = indices_[chain_storage_location].begin();
-            while (*it != data_storage_location) {
-                ++it;
-            }
-            indices_[chain_storage_location].erase(it);
-            hashmap_[data_storage_location] = last_element;
-            hashmap_.pop_back();
+            erase_non_last_element(key, last_element);
         }
         if (stored_elements * kMinLoadFactor <= capacity) {
             capacity /= kScalingFactor;
@@ -221,6 +196,41 @@ private:
         for (auto element : old_hashmap) {
             insert(element);
         }
+    }
+    
+    // Helper function. Erases an element if it is last in data storage.
+    void erase_last_element() {
+        size_t chain_storage_location = hasher_(hashmap_.back().first) % capacity;
+        hashmap_.pop_back();
+        --stored_elements;
+        auto it = indices_[chain_storage_location].begin();
+        while (*it != stored_elements) {
+            ++it;
+        }
+        indices_[chain_storage_location].erase(it);
+    }
+    
+    // Helper function. Erases an element if it is not last in data storage.
+    void erase_non_last_element(const KeyType& key, const std::pair<KeyType, ValueType>& last_element) {
+    	int last_element_chain_storage_location = hasher_(last_element.first) % capacity;
+        int chain_storage_location = hasher_(key) % capacity;
+        size_t data_storage_location = 0;
+        for (auto i : indices_[chain_storage_location]) {
+            if (hashmap_[i].first == key) data_storage_location = i;
+        }
+        --stored_elements;
+        auto it = indices_[last_element_chain_storage_location].begin();
+        while (*it != stored_elements) {
+            ++it;
+        }
+        *it = data_storage_location;
+        it = indices_[chain_storage_location].begin();
+        while (*it != data_storage_location) {
+            ++it;
+        }
+        indices_[chain_storage_location].erase(it);
+        hashmap_[data_storage_location] = last_element;
+        hashmap_.pop_back();
     }
 };
 
