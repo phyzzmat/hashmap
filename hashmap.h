@@ -19,7 +19,13 @@ class HashMap {
   public:
     typedef Iter<KeyType, ValueType> iterator;
     typedef ConstIter<KeyType, ValueType> const_iterator;
-
+    
+    // How many times the capacity of the map changes after rebuilding.
+    static constexpr size_t kScalingFactor = 2;
+    // The minimum discrepancies between hashmap capacity and number of stored elements for it to be rebuilt.
+    static constexpr size_t kMinLoadFactor = 4;
+    static constexpr size_t kMaxLoadFactor = 2;
+  
     HashMap(const Hash &hasher = Hash()) : hasher_(hasher) {}
 
     // Constructor from two iterators.
@@ -164,11 +170,6 @@ class HashMap {
   private:
 
     size_t capacity_ = 1, stored_elements_ = 0;
-    // How many times the capacity of the map changes after rebuilding.
-    static constexpr size_t kScalingFactor = 2;
-    // The minimum discrepancies between hashmap capacity and number of stored elements for it to be rebuilt.
-    static constexpr size_t kMinLoadFactor = 4;
-    static constexpr size_t kMaxLoadFactor = 2;
 
     std::vector<std::list<size_t>> indices_ = std::vector<std::list<size_t>>(capacity_);
     std::vector<std::pair<KeyType, ValueType>> hashmap_;
