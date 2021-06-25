@@ -268,7 +268,7 @@ class Iter {
 
     // O(1)
     std::pair<const KeyType, ValueType> operator*() {
-        return *reinterpret_cast<std::pair<const KeyType, ValueType>*>(&*iter_);
+        return *iter_;
     }
 
     // O(1)
@@ -315,7 +315,7 @@ class ConstIter {
 
     // O(1)
     const std::pair<const KeyType, ValueType> operator*() const {
-        return *reinterpret_cast<const std::pair<const KeyType, ValueType>*>(&*const_iter_);
+        return *const_iter_;
     }
 
     // O(1)
