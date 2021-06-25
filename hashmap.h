@@ -123,11 +123,8 @@ class HashMap {
         if (key_position == end()) {
             return;
         }
+        EraseLastElement(SwapWithLastIfNecessary(key));
         --stored_elements_;
-        if (LastKey() != key) {
-            SwapWithLast(key);
-        }
-        EraseLastElement();
         DownscaleIfNecessary();
     }
 
@@ -191,22 +188,23 @@ class HashMap {
     }
 
     // Helper function. Erases an element if it is last in data storage.
-    void EraseLastElement() {
+    void EraseLastElement(std::list<size_t>::iterator iter) {
         size_t chain_storage_location = GetBucketIndex(LastKey());
+        indices_[chain_storage_location].erase(iter);
         hashmap_.pop_back();
-        auto it = indices_[chain_storage_location].begin();
-        while (*it != stored_elements_) {
-            ++it;
-        }
-        indices_[chain_storage_location].erase(it);
     }
 
-    // Helper function. Erases an element if it is not last in data storage.
-    void SwapWithLast(const KeyType& key) {
-        auto it1 = FindInChainList(key);
-        auto it2 = FindInChainList(LastKey());
-        std::swap(*it1, *it2);
-        std::swap(hashmap_[*it1], hashmap_[*it2]);
+    // Helper function. Swaps given element with last in data storage
+    // Returns iterator pointing to last element in chain storage.
+    std::list<size_t>::iterator SwapWithLastIfNecessary(const KeyType& key) {
+        auto it_key = FindInChainList(key);
+        if (LastKey() == key) {
+            return it_key;
+        }
+        auto it_last = FindInChainList(LastKey());
+        std::swap(*it_last, *it_key);
+        std::swap(hashmap_[*it_key], hashmap_[*it_last]);
+        return it_key;
     }
 
     // Returns a list iterator pointing to the position in the chain list
@@ -215,7 +213,7 @@ class HashMap {
     std::list<size_t>::iterator FindInChainList(const KeyType &key) {
         size_t chain_storage_location = GetBucketIndex(key);
         auto it = indices_[chain_storage_location].begin();
-        while (*it > stored_elements_ || hashmap_[*it].first != key) {
+        while (*it >= stored_elements_ || hashmap_[*it].first != key) {
             ++it;
         }
         return it;
@@ -254,6 +252,8 @@ class HashMap {
 
 
 // ForwardIterator for HashMap.
+// Implemented with std::vector<> iterators.
+// Allows to iterate over the hash map in linear time, accessing elements in some order.
 template<class KeyType, class ValueType>
 class Iter {
   public:
@@ -300,7 +300,7 @@ class Iter {
     typename std::vector<std::pair<KeyType, ValueType>>::iterator iter_;
 };
 
-// Constant ForwardIterator for HashMap.
+// Constant version of the ForwardIterator for HashMap.
 template<class KeyType, class ValueType>
 class ConstIter {
   public:
