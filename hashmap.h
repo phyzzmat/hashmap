@@ -41,7 +41,7 @@ class HashMap {
     // Constructor from initializer list.
     HashMap(std::initializer_list<std::pair<KeyType, ValueType>> init_list, const Hash &h = Hash()) {
         hasher_ = h;
-        for (auto element : init_list) {
+        for (const auto &element : init_list) {
             insert(element);
         }
     };
@@ -83,7 +83,7 @@ class HashMap {
 
     // Returns const iterator to key if it exists, end() otherwise.
     // Time complexity: amortized O(1), individual query expected O(1), provided the hash function is good enough.
-    const_iterator find(KeyType key) const {
+    const_iterator find(const KeyType &key) const {
         if (capacity_ == 0) {
             return end();
         }
@@ -109,7 +109,7 @@ class HashMap {
     // Inserts an element in case there does not already exist one with the same key.
     // Returns an iterator to the inserted element (or the existing one).
     // Time complexity: amortized O(1), individual query O(n).
-    iterator insert(const std::pair<KeyType, ValueType>& element) {
+    iterator insert(const std::pair<KeyType, ValueType> &element) {
         auto key_position = find(element.first);
         if (key_position != end()) {
             return key_position;
@@ -124,7 +124,7 @@ class HashMap {
 
     // Erases an element by key if there exists one, otherwise does nothing.
     // Time complexity: amortized O(1), individual query O(n).
-    void erase(const KeyType& key) {
+    void erase(const KeyType &key) {
         iterator key_position = find(key);
         if (key_position == end()) {
             return;
@@ -147,15 +147,15 @@ class HashMap {
     // If there already exists an element with given key, returns a non-const iterator pointing to it.
     // Otherwise, inserts a new entry with this key and default value to the hashmap.
     // Time complexity: amortized O(1), individual query O(n).
-    ValueType &operator[](const KeyType& key) {
+    ValueType &operator[](const KeyType &key) {
         return insert({key, ValueType()})->second;
     }
 
     // If there exists an element with given key, returns a constant iterator pointing to it.
     // Otherwise, throws the std::out_of_range() exception.
     // Time complexity: amortized O(1), individual query expected O(1) provided the hash function is good enough.
-    const ValueType &at(const KeyType& key) const {
-        auto key_position = find(key);
+    const ValueType &at(const KeyType &key) const {
+        const_iterator key_position = find(key);
         if (key_position == end()) {
             throw std::out_of_range("");
         }
@@ -199,7 +199,7 @@ class HashMap {
     // Helper function. Swaps given element with last in data storage
     // Returns iterator pointing to last element in chain storage.
     // Time complexity: amortized O(1), expected O(1) provided if hash function is good enough.
-    std::list<size_t>::iterator SwapWithLastIfNecessary(const KeyType& key) {
+    std::list<size_t>::iterator SwapWithLastIfNecessary(const KeyType &key) {
         auto it_key = FindInChainList(key);
         if (LastKey() == key) {
             return it_key;
@@ -256,7 +256,7 @@ class HashMap {
 
 // ForwardIterator for HashMap.
 // Implemented with std::vector<> iterators.
-// Allows to iterate over the hash map in linear time, accessing elements in some order.
+// Allows to iterate over the hash map in linear time, accessing elements in arbitrary order.
 template<class KeyType, class ValueType>
 class Iter {
   public:
