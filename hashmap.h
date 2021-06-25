@@ -188,6 +188,7 @@ class HashMap {
     }
 
     // Helper function. Erases an element if it is last in data storage.
+    // Time complexity: O(1).
     void EraseLastElement(std::list<size_t>::iterator iter) {
         size_t chain_storage_location = GetBucketIndex(LastKey());
         indices_[chain_storage_location].erase(iter);
@@ -196,6 +197,7 @@ class HashMap {
 
     // Helper function. Swaps given element with last in data storage
     // Returns iterator pointing to last element in chain storage.
+    // Time complexity: amortized O(1), expected O(1) provided if hash function is good enough.
     std::list<size_t>::iterator SwapWithLastIfNecessary(const KeyType& key) {
         auto it_key = FindInChainList(key);
         if (LastKey() == key) {
