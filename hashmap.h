@@ -73,7 +73,7 @@ class HashMap {
             return end();
         }
         size_t candidate_position = GetBucketIndex(key);
-        for (const auto& element : indices_[candidate_position]) {
+        for (const auto &element : indices_[candidate_position]) {
             if (hashmap_[element].first == key) {
                 return iterator(hashmap_.begin() + element);
             }
