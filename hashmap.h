@@ -109,7 +109,7 @@ class HashMap {
     // Inserts an element in case there does not already exist one with the same key.
     // Returns an iterator to the inserted element (or the existing one).
     // Time complexity: amortized O(1), individual query O(n).
-    iterator insert(std::pair<KeyType, ValueType> element) {
+    iterator insert(const std::pair<KeyType, ValueType>& element) {
         auto key_position = find(element.first);
         if (key_position != end()) {
             return key_position;
@@ -124,7 +124,7 @@ class HashMap {
 
     // Erases an element by key if there exists one, otherwise does nothing.
     // Time complexity: amortized O(1), individual query O(n).
-    void erase(KeyType key) {
+    void erase(const KeyType& key) {
         iterator key_position = find(key);
         if (key_position == end()) {
             return;
@@ -147,14 +147,14 @@ class HashMap {
     // If there already exists an element with given key, returns a non-const iterator pointing to it.
     // Otherwise, inserts a new entry with this key and default value to the hashmap.
     // Time complexity: amortized O(1), individual query O(n).
-    ValueType &operator[](KeyType key) {
+    ValueType &operator[](const KeyType& key) {
         return insert({key, ValueType()})->second;
     }
 
     // If there exists an element with given key, returns a constant iterator pointing to it.
     // Otherwise, throws the std::out_of_range() exception.
     // Time complexity: amortized O(1), individual query expected O(1) provided the hash function is good enough.
-    const ValueType &at(KeyType key) const {
+    const ValueType &at(const KeyType& key) const {
         auto key_position = find(key);
         if (key_position == end()) {
             throw std::out_of_range("");
