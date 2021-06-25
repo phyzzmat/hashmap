@@ -11,7 +11,7 @@ template<class KeyType, class ValueType> class ConstIter;
 // - the main data storage, implemented with std::vector<std::pair<>>.
 // Resize policy:
 // - if the number of elements exceeds current capacity multiplied by kMaxLoadFactor,
-// capacity is increased to double the original;
+// capacity is increased to kScalingFactor times the original;
 // - if the capacity exceeds kMinScalingFactor times the number of elements, the size is reduced kScalingFactor-fold.
 
 template<class KeyType, class ValueType, class Hash = std::hash<KeyType> >
@@ -88,7 +88,7 @@ class HashMap {
             return end();
         }
         size_t candidate_position = GetBucketIndex(key);
-        for (const auto& element : indices_[candidate_position]) {
+        for (const auto &element : indices_[candidate_position]) {
             if (hashmap_[element].first == key) {
                 return const_iterator(hashmap_.begin() + element);
             }
@@ -157,7 +157,7 @@ class HashMap {
     const ValueType &at(const KeyType &key) const {
         const_iterator key_position = find(key);
         if (key_position == end()) {
-            throw std::out_of_range("");
+            throw std::out_of_range("Key not found");
         }
         return key_position->second;
     }
